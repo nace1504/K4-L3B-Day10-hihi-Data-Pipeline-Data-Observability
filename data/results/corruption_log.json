@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-09-26T04:48:15.058167+00:00",
+  "deterministic": true,
+  "input_rows": 24,
+  "output_rows": 22,
+  "scenario_count": 6,
+  "scenarios": [
+    {
+      "type": "drop_latest_records",
+      "count": 5,
+      "paper_ids": [
+        "10.1145/3637528.3671812",
+        "10.1145/3637528.3671808",
+        "10.1145/3637528.3671804",
+        "10.1145/3637528.3671807",
+        "10.1145/3637528.3671802"
+      ],
+      "details": "Dropped the newest 20% of records."
+    },
+    {
+      "type": "blank_summary",
+      "count": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671824",
+        "10.1145/3637528.3671818",
+        "10.1145/3637528.3671811"
+      ],
+      "details": "Replaced summaries with empty strings."
+    },
+    {
+      "type": "inject_noise",
+      "count": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671822",
+        "10.1145/3637528.3671816",
+        "10.1145/3637528.3671809"
+      ],
+      "details": "Prepended repeated garbage tokens to summaries."
+    },
+    {
+      "type": "truncate_title",
+      "count": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671810",
+        "10.1145/3637528.3671814",
+        "10.1145/3637528.3671805"
+      ],
+      "details": "Truncated titles to fewer than eight characters."
+    },
+    {
+      "type": "stale_date",
+      "count": 6,
+      "paper_ids": [
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671801",
+        "10.1145/3637528.3671823",
+        "10.1145/3637528.3671817",
+        "10.1145/3637528.3671806",
+        "10.1145/3637528.3671821"
+      ],
+      "details": "Made at least 30% of remaining rows stale to breach the 25% freshness SLA."
+    },
+    {
+      "type": "duplicate_rows",
+      "count": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671823",
+        "10.1145/3637528.3671817",
+        "10.1145/3637528.3671806"
+      ],
+      "details": "Appended exact rows while preserving paper_id."
+    }
+  ]
+}

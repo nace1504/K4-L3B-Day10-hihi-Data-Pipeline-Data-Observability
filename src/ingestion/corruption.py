@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from math import ceil
 from pathlib import Path
 from typing import Any
 
@@ -107,7 +108,10 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path: Path | str) -> pd
         "details": "Truncated titles to fewer than eight characters.",
     })
 
-    stale_indices = _sample_indices(corrupted, mutation_count, offset=6)
+    # Corrupt enough dates to cross the observability SLA (>25% stale), rather
+    # than merely making individual dates old while the dataset still passes.
+    stale_count = max(mutation_count, ceil(len(corrupted) * 0.30))
+    stale_indices = _sample_indices(corrupted, stale_count, offset=6)
     corrupted.loc[stale_indices, "published"] = "2000-01-01"
     now = pd.Timestamp(datetime.now(UTC))
     corrupted.loc[stale_indices, "age_days"] = (now - pd.Timestamp("2000-01-01", tz="UTC")).days
@@ -115,7 +119,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path: Path | str) -> pd
         "type": "stale_date",
         "count": len(stale_indices),
         "paper_ids": _paper_ids(corrupted, stale_indices),
-        "details": "Set publication dates to 2000-01-01 and recomputed age_days.",
+        "details": "Made at least 30% of remaining rows stale to breach the 25% freshness SLA.",
     })
 
     _rebuild_embedding_text(corrupted)

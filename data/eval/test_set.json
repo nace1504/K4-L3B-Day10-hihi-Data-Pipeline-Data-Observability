@@ -2,91 +2,91 @@
   {
     "id": "q01",
     "question_type": "summary",
-    "question": "What is the summary of 'DOLPHIN: A Privacy-Preserving Digital Investigation Readiness Assessment Framework based on Offline Large Language Models and Retrieval-Augmented Generation'?",
-    "ground_truth": "Abstract Increasingly, digital forensic investigations require a quick, reliable, and privacy-preserving assessment of case materials before formal forensic examination. Existing approaches to forensic readiness are, however, infrastructure-based and inadequately support the completeness of evidence, the identification of evidence gaps, and preparation of a structured investigation at the case level. This study introduces a privacy-preserving framework for assessing digital investigation readiness called DOLPHIN, which integrates offline large language models with retrieval-augmented generation to provide evidence-based investigation support. Thirty sets of 30 cases of structured investigation scenarios were created under five evidence-completeness conditions: complete-evidence, partial-evidence, and low-evidence cases. A Forensic Readiness Index was scored for each case across six categories of evidence: victim statement, FIR/CSR, CCTV evidence, witness statement, ownership documents, and metadata. The deficiencies were categorized using a taxonomy of evidence gaps. Evidence gaps were classified into four categories: documentation gaps, corroboration gaps, visual gaps, and time gaps. To ensure that critical investigation data is not processed in the cloud, the framework was deployed locally with the help of LM Studio, AnythingLLM, and Qwen 3. The experimental results indicated that DOLPHIN obtained a readiness classification accuracy of 92.0% and excellent evidence-gap detection performance with F1 scores ranging from 90.27% to 94.60%. The retrieval performance with metadata-filtered RAG was found to be superior, with 90.33% top-1 accuracy, 99.67% top-3 accuracy, and 94.06% mean reciprocal rank. The unsupported output rate went down from 16.33% to 2.00% when using metadata-filtered RAG. DOLPHIN also significantly reduced the mean preparation time, from 15.46 to 4.41 minutes per case, and increased the completion rate for reports. The results show the potential of offline LLM-RAG systems to aid in investigation-readiness assessment in a human-centered and interpretable way while preserving privacy.",
+    "question": "What is the summary of 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines'?",
+    "ground_truth": "Static benchmarks fail to capture domain drift in enterprise knowledge bases. We establish a synthetic test generator that auto-creates paired evaluation sets whenever new corpora are ingested.",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10489777/v1"
+      "10.1145/3637528.3671812"
     ]
   },
   {
     "id": "q02",
     "question_type": "summary",
-    "question": "What is the summary of 'Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review'?",
-    "ground_truth": "Large language models have accelerated the development of intelligent assistants by providing flexible natural- language understanding and generation. However, hallucination, knowledge staleness, and limited coverage of domain-specific information continue to restrict their reliability in knowledge-intensive tasks. This review examines how Retrieval -Augmented Generation (RAG) can strengthen LLM-based intelligent assistants by connecting generative capability with external, maintainable knowledge. It synthesi zes research on the technical foundations of RAG, key components and optimization strategies, and applications and challenges in intelligent-assistant settings. The review finds that RAG can improve knowledge accuracy and timeliness by grounding responses in retrieved evidence and allowing knowledge resources to be updated independently of the base model. These benefits are conditional: unreliable retrieval, poorly maintained sources, ineffective use of context, and fragmented evaluation can still produce u nsupported or unsafe answers. Reliable deployment, therefore, requires coordinated retrieval quality, knowledge management, generation control, and trustworthy evaluation. Future RAG-based assistants should combine these capabilities to become scalable, secure, evidence-aware, and verifiable systems.",
+    "question": "What is the summary of 'Multi-Agent Consensus for High-Stakes Fact Verification'?",
+    "ground_truth": "A single LLM is susceptible to confirmation bias when evaluating retrieved evidence. We demonstrate a multi-agent debate architecture where specialized verifier agents critique and corroborate citations.",
     "ground_truth_doc_ids": [
-      "10.70267/aitia.2026482489"
+      "10.1145/3637528.3671808"
     ]
   },
   {
     "id": "q03",
     "question_type": "summary",
-    "question": "What is the summary of 'Agentic Retrieval-Augmented Generation for Verifiable Regulatory Compliance in Urban Cyber-Physical Systems'?",
-    "ground_truth": "Abstract Urban Cyber-Physical Systems (UCPS) support sustainable cities through the integration of Internet of Things (IoT), Artificial Intelligence (AI), and digi-tal infrastructures for environmental monitoring, urban planning, and resilient public services. However, ensuring regulatory compliance is increasingly chal-lenging because environmental, cybersecurity, municipal planning, and AI gov-ernance regulations evolve continuously across jurisdictions. Existing Retrieval-Augmented Generation (RAG) approaches improve evidence retrieval but remain vulnerable to hallucinations, regulatory supersession errors, and jurisdictional inconsistencies due to the absence of deterministic regulatory verification. This paper proposes a Verification-First Agentic Retrieval-Augmented Generation framework for trustworthy regulatory compliance reasoning in UCPS. The framework incorporates a Retrieval Agent, a deterministic Critic Agent, and a Formatting Agent to validate temporal validity, regulatory supersession, juris-dictional applicability, and compliance scope before language-model generation. A curated regulatory corpus and a benchmark comprising 78 regulatory com-pliance probes were used for evaluation against BM25, Dense RAG, Self-RAG, and Corrective RAG (CRAG). The proposed framework achieved a superses-sion detection rate of 0.88, perfect standalone Critic Agent validation (Precision = Recall = F1-score = 1.00), improved retrieval ranking quality (nDCG@5 = 0.75), and competitive computational efficiency. These results demonstrate that deterministic verification significantly improves the reliability, transparency, and trustworthiness of regulatory reasoning for sustainable urban governance.",
+    "question": "What is the summary of 'Freshness SLAs for Real-Time LLM Knowledge Augmentation'?",
+    "ground_truth": "We define freshness service-level agreements (SLAs) for temporal document ingestion. By tracking document age and update cadence, our orchestrator dynamically prioritizes recrawling high-churn technical corpora.",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10349437/v1"
+      "10.1145/3637528.3671804"
     ]
   },
   {
     "id": "q04",
     "question_type": "authors",
-    "question": "Who authored 'DOLPHIN: A Privacy-Preserving Digital Investigation Readiness Assessment Framework based on Offline Large Language Models and Retrieval-Augmented Generation'?",
-    "ground_truth": "Divya K",
+    "question": "Who authored 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines'?",
+    "ground_truth": "Quang Le, Yen Vu",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10489777/v1"
+      "10.1145/3637528.3671812"
     ]
   },
   {
     "id": "q05",
     "question_type": "authors",
-    "question": "Who authored 'Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review'?",
-    "ground_truth": "Zilang Shao",
+    "question": "Who authored 'Multi-Agent Consensus for High-Stakes Fact Verification'?",
+    "ground_truth": "Phong Vu, Ngan Hoang",
     "ground_truth_doc_ids": [
-      "10.70267/aitia.2026482489"
+      "10.1145/3637528.3671808"
     ]
   },
   {
     "id": "q06",
     "question_type": "authors",
-    "question": "Who authored 'Agentic Retrieval-Augmented Generation for Verifiable Regulatory Compliance in Urban Cyber-Physical Systems'?",
-    "ground_truth": "Sathiska Priyad, Gayathri Karthick",
+    "question": "Who authored 'Freshness SLAs for Real-Time LLM Knowledge Augmentation'?",
+    "ground_truth": "Bao Do, Linh Ngo",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10349437/v1"
+      "10.1145/3637528.3671804"
     ]
   },
   {
     "id": "q07",
     "question_type": "date",
-    "question": "When was 'DOLPHIN: A Privacy-Preserving Digital Investigation Readiness Assessment Framework based on Offline Large Language Models and Retrieval-Augmented Generation' published?",
-    "ground_truth": "2026-09-15",
+    "question": "When was 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines' published?",
+    "ground_truth": "2026-07-22",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10489777/v1"
+      "10.1145/3637528.3671812"
     ]
   },
   {
     "id": "q08",
     "question_type": "date",
-    "question": "When was 'Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review' published?",
-    "ground_truth": "2026-09-13",
+    "question": "When was 'Multi-Agent Consensus for High-Stakes Fact Verification' published?",
+    "ground_truth": "2026-07-19",
     "ground_truth_doc_ids": [
-      "10.70267/aitia.2026482489"
+      "10.1145/3637528.3671808"
     ]
   },
   {
     "id": "q09",
     "question_type": "categories",
-    "question": "What categories does 'DOLPHIN: A Privacy-Preserving Digital Investigation Readiness Assessment Framework based on Offline Large Language Models and Retrieval-Augmented Generation' belong to?",
-    "ground_truth": "Uncategorized",
+    "question": "What categories does 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines' belong to?",
+    "ground_truth": "Evaluation Methodology, Enterprise Systems",
     "ground_truth_doc_ids": [
-      "10.21203/rs.3.rs-10489777/v1"
+      "10.1145/3637528.3671812"
     ]
   },
   {
     "id": "q10",
     "question_type": "categories",
-    "question": "What categories does 'Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review' belong to?",
-    "ground_truth": "Uncategorized",
+    "question": "What categories does 'Multi-Agent Consensus for High-Stakes Fact Verification' belong to?",
+    "ground_truth": "Multi-Agent Systems, Artificial Intelligence",
     "ground_truth_doc_ids": [
-      "10.70267/aitia.2026482489"
+      "10.1145/3637528.3671808"
     ]
   }
 ]

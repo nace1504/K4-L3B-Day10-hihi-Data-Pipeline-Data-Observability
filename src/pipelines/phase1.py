@@ -21,6 +21,22 @@ def _write_dataframe(df: pd.DataFrame, csv_path, json_path) -> None:
     df.to_json(json_path, orient="records", indent=2, force_ascii=False, date_format="iso")
 
 
+def _test_set_matches_dataset(test_set: list[dict], df: pd.DataFrame) -> bool:
+    """Return true only when every ground-truth document exists in this snapshot."""
+    document_ids = set(df["paper_id"].dropna().astype(str))
+    if not test_set:
+        return False
+    try:
+        ground_truth_ids = {
+            str(document_id)
+            for item in test_set
+            for document_id in item["ground_truth_doc_ids"]
+        }
+    except (KeyError, TypeError):
+        return False
+    return bool(ground_truth_ids) and ground_truth_ids.issubset(document_ids)
+
+
 def main() -> None:
     """Run ingestion, cleaning, indexing, evaluation and observability."""
     settings = load_settings()
@@ -44,10 +60,13 @@ def main() -> None:
     index = LocalEmbeddingIndex.build(clean_df, settings, paths.embeddings_json)
 
     print("[4/6] Preparing a shared evaluation set...")
-    if settings.refresh_test_set or not paths.eval_testset.exists():
-        test_set = build_test_set(clean_df, paths.eval_testset)
-    else:
+    if paths.eval_testset.exists() and not settings.refresh_test_set:
         test_set = read_json(paths.eval_testset)
+    else:
+        test_set = []
+    if not _test_set_matches_dataset(test_set, clean_df):
+        print("  Existing evaluation set does not match this dataset; rebuilding it.")
+        test_set = build_test_set(clean_df, paths.eval_testset)
     if not test_set:
         raise RuntimeError("The evaluation set is empty.")
 

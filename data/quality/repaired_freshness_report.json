@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "is_fresh": true,
+  "freshness_threshold_days": 180,
+  "max_stale_ratio": 0.25,
+  "stale_rows": 1,
+  "total_rows": 24,
+  "stale_ratio": 0.041666666666666664,
+  "latest_published": "2026-07-22",
+  "oldest_published": "2026-03-28"
+}

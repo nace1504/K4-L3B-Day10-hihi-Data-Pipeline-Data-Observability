@@ -38,6 +38,14 @@ def main() -> None:
 
     baseline_df = pd.read_json(paths.clean_json)
     baseline_metrics = read_json(paths.baseline_metrics)
+    baseline_quality = (
+        read_json(paths.baseline_quality_report)
+        if paths.baseline_quality_report.exists()
+        else {}
+    )
+    baseline_freshness = (
+        read_json(paths.freshness_report) if paths.freshness_report.exists() else {}
+    )
     if baseline_df.empty:
         raise RuntimeError("The baseline clean dataset is empty.")
 
@@ -79,9 +87,14 @@ def main() -> None:
     )
 
     print("[5/5] Writing the three-state comparison report...")
+    baseline_report_values = {
+        **baseline_metrics,
+        "quality": baseline_quality,
+        "freshness": baseline_freshness,
+    }
     generate_corruption_report(
         paths.comparison_report,
-        baseline_metrics,
+        baseline_report_values,
         corrupted_evaluation.summary,
         repaired_evaluation.summary,
         corrupted_quality,
