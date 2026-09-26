@@ -75,7 +75,8 @@ Sau khi thay đổi các cột nguồn, pipeline build lại `text_for_embedding
 
 ```powershell
 $env:HF_HUB_OFFLINE='1'
-$env:LLM_PROVIDER='mock'
+$env:LLM_PROVIDER='openai'
+$env:LLM_MODEL='gpt-4o-mini'
 python script/run_phase1.py
 python script/run_corruption_flow.py
 ```
@@ -84,7 +85,7 @@ python script/run_corruption_flow.py
 - **Kết quả thực tế:** cả hai lệnh exit code `0`; baseline và repaired có cùng bốn metrics, corrupted giảm ở cả bốn metrics.
 - **Artifact/log:** `data/results/*.json`, `data/quality/*.json`, `data/reports/phase1_report.md`, `data/reports/corruption_report.md`.
 
-Lần xác minh cuối dùng `LLM_PROVIDER=mock`; judge vì vậy dùng heuristic fallback dựa trên Token F1. Ragas được giữ ở trạng thái skipped vì `RUN_RAGAS` không được bật.
+Số liệu đo bằng LLM_PROVIDER=openai (gpt-4o-mini), không phải mock. Ragas được giữ ở trạng thái skipped vì `RUN_RAGAS` không được bật.
 
 ## 5. Một quyết định kỹ thuật quan trọng
 
@@ -121,8 +122,8 @@ Một blocker môi trường khác là lỗi SSL khi tải MiniLM. Kết nối �
 | --- | ---: | ---: | ---: | --- |
 | `retrieval_hit_rate` | 1.0000 | 0.0000 | 1.0000 | Corruption loại khỏi index toàn bộ ground-truth docs được chọn; repair khôi phục hoàn toàn |
 | `mean_token_f1` | 0.8816 | 0.5537 | 0.8816 | Câu trả lời corrupted vẫn có một phần token chung nhưng giảm 0.3279 |
-| `judge_accuracy` | 1.0000 | 0.6000 | 1.0000 | Heuristic judge ghi nhận 4/10 câu không còn đúng |
-| `mean_judge_score` | 4.4000 | 3.2000 | 4.4000 | Giảm 1.2 điểm rồi khôi phục hoàn toàn |
+| `judge_accuracy` | 0.7000 | 0.5000 | 0.7000 | LLM judge (gpt-4o-mini) chấm đúng 7/10 → 5/10 → 7/10 |
+| `mean_judge_score` | 4.3000 | 3.3000 | 4.3000 | Giảm 1.0 điểm rồi khôi phục hoàn toàn |
 | Quality checks | True | False | True | Duplicate IDs và 3 summary rỗng làm quality gate fail |
 | Freshness status | True (1/24 stale, 4.17%) | False (10/22 stale, 45.45%) | True (1/24 stale, 4.17%) | Corruption vượt ngưỡng stale 25%; repair khôi phục SLA |
 

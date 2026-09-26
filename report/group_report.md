@@ -21,9 +21,11 @@
 
 Nhóm đã hoàn thành pipeline RAG data end-to-end từ snapshot Crossref đến cleaning, embedding MiniLM, ChromaDB, evaluation, observability, synthetic corruption và repair. Ingestion tạo 24 `PaperRecord`; cleaning giữ 24 dòng hợp lệ, duy nhất theo DOI, có `age_days` và `text_for_embedding` năm phần. Baseline dùng 10 câu hỏi thuộc bốn loại và đạt retrieval hit rate `1.0000`, Mean Token F1 `0.8816`; quality và freshness đều pass.
 
-Corruption suite tiêm đủ sáu lỗi: drop năm records mới nhất, ba summary rỗng, ba summary nhiễu, ba title bị cắt, sáu records bị làm stale và ba duplicate rows. Quality gate phát hiện duplicate/summary lỗi; stale ratio tăng từ `4.17%` lên `45.45%`, khiến freshness fail. Drop latest ảnh hưởng rõ nhất vì các ground-truth documents của test set không còn trong corrupted index: hit rate giảm xuống `0.0000`, Token F1 còn `0.5537`. Repair không sửa chắp vá trên dữ liệu bẩn mà tái dựng từ raw snapshot, re-index và dùng lại đúng test set; toàn bộ quality, freshness và bốn metrics trở về baseline.
+Corruption suite tiêm đủ sáu lỗi: drop năm records mới nhất, ba summary rỗng, ba summary nhiễu, ba title bị cắt, sáu records bị làm stale và ba duplicate rows. Quality gate phát hiện duplicate/summary lỗi; stale ratio tăng từ `4.17%` lên `45.45%`, khiến freshness fail. Drop latest ảnh hưởng rõ nhất vì các ground-truth documents của test set không còn trong corrupted index: retrieval hit rate sụp đổ hoàn toàn từ `1.0000` xuống `0.0000`, Token F1 giảm từ `0.8816` còn `0.5537`, judge accuracy giảm từ `0.7000` còn `0.5000`. Đây là Silent Failure rất rõ rệt: pipeline vẫn chạy thành công (exit code 0) và agent vẫn trả lời, nhưng không còn câu nào retrieve được đúng tài liệu nguồn. Repair không sửa chắp vá trên dữ liệu bẩn mà tái dựng từ raw snapshot, re-index và dùng lại đúng test set; toàn bộ quality, freshness và bốn metrics trở về baseline.
 
-Giới hạn chính là lần đo cuối dùng `LLM_PROVIDER=mock`, nên judge sử dụng heuristic fallback và Ragas không bật. MiniLM vẫn là embedding thật. Ngoài ra, test set nhỏ và chọn deterministic từ đầu dataframe nên mức suy giảm nhạy với kịch bản drop latest.
+Số liệu đo bằng LLM_PROVIDER=openai (gpt-4o-mini), không phải mock.
+
+Giới hạn chính là Ragas không bật và judge accuracy baseline chỉ đạt `0.7000` (7/10) dù retrieval đạt `1.0000`. MiniLM là embedding thật. Ngoài ra, test set nhỏ và chọn deterministic từ đầu dataframe nên mức suy giảm nhạy với kịch bản drop latest.
 
 ## 3. Kiến trúc và luồng dữ liệu
 
@@ -56,8 +58,8 @@ Crossref API / local snapshot
 
 | Biến/cấu hình | Giá trị sử dụng ở lần đo cuối |
 | --- | --- |
-| `LLM_PROVIDER` | `mock` |
-| `LLM_MODEL` | Không dùng trong lần đo mock; cấu hình mặc định là `gemini-2.5-flash` |
+| `LLM_PROVIDER` | `openai` |
+| `LLM_MODEL` | `gpt-4o-mini` |
 | Embedding model | `sentence-transformers/all-MiniLM-L6-v2` |
 | Crossref records | 24 |
 | Retrieval `top_k` | 4 |
@@ -70,7 +72,9 @@ Crossref API / local snapshot
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -e .
-$env:LLM_PROVIDER='mock'
+$env:LLM_PROVIDER='openai'
+$env:LLM_MODEL='gpt-4o-mini'
+# OPENAI_API_KEY đặt trong .env (không commit)
 python script/run_phase1.py
 python script/run_corruption_flow.py
 ```
@@ -134,7 +138,7 @@ $env:HF_HUB_OFFLINE='1'
 | Embedding | `all-MiniLM-L6-v2`, normalized vectors |
 | Vector store | ChromaDB; `papers-baseline`, `papers-corrupted`, `papers-repaired` |
 | Retrieval | `top_k=4`, cosine space |
-| Judge | `mock`/heuristic fallback ở lần đo cuối |
+| Judge | LLM judge `openai`/`gpt-4o-mini` ở lần đo cuối |
 | Shared test set | `data/eval/test_set.json` |
 
 Cùng một test set được dùng cho cả ba trạng thái. Nếu đổi câu hỏi hoặc ground truth giữa các lần chạy, chênh lệch metric có thể đến từ benchmark thay vì corruption. Baseline còn kiểm tra lineage và tự build lại test set nếu ground-truth IDs không thuộc snapshot hiện hành.
@@ -157,8 +161,8 @@ Cùng một test set được dùng cho cả ba trạng thái. Nếu đổi câu
 | --- | ---: | --- |
 | `retrieval_hit_rate` | 1.0000 | Cả 10 câu retrieve được ground-truth doc trong top 4 |
 | `mean_token_f1` | 0.8816 | Mức trùng token trung bình cao với đáp án chuẩn |
-| `judge_accuracy` | 1.0000 | Heuristic judge đánh dấu đúng 10/10 |
-| `mean_judge_score` | 4.4000 | Điểm trung bình trên thang 1–5 |
+| `judge_accuracy` | 0.7000 | LLM judge (gpt-4o-mini) đánh dấu đúng 7/10 |
+| `mean_judge_score` | 4.3000 | Điểm trung bình trên thang 1–5 |
 | Ragas | N/A | Không bật `RUN_RAGAS`; tránh ghi số liệu chưa chạy |
 
 ## 8. Data quality và freshness
@@ -195,16 +199,16 @@ Cùng một test set được dùng cho cả ba trạng thái. Nếu đổi câu
 
 | Metric/signal | Baseline | Corrupted | Repaired | Thay đổi corruption | Phục hồi | Nhận xét |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| `retrieval_hit_rate` | 1.0000 | 0.0000 | 1.0000 | -1.0000 | 100% | Ground-truth docs bị drop, rồi phục hồi |
+| `retrieval_hit_rate` | 1.0000 | 0.0000 | 1.0000 | -1.0000 | 100% | Sụp đổ hoàn toàn: ground-truth docs bị drop, rồi phục hồi |
 | `mean_token_f1` | 0.8816 | 0.5537 | 0.8816 | -0.3279 | 100% | Answer quality giảm rồi về baseline |
-| `judge_accuracy` | 1.0000 | 0.6000 | 1.0000 | -0.4000 | 100% | 4/10 câu bị ảnh hưởng |
-| `mean_judge_score` | 4.4000 | 3.2000 | 4.4000 | -1.2000 | 100% | Phục hồi đúng baseline |
+| `judge_accuracy` | 0.7000 | 0.5000 | 0.7000 | -0.2000 | 100% | Từ 7/10 còn 5/10 câu được judge chấm đúng |
+| `mean_judge_score` | 4.3000 | 3.3000 | 4.3000 | -1.0000 | 100% | Phục hồi đúng baseline |
 | Quality | Pass | Fail | Pass | Duplicate và summary lỗi | Hoàn toàn | `True → False → True` |
 | Freshness | Pass | Fail | Pass | 4.17% → 45.45% stale | Hoàn toàn | `True → False → True` |
 
 Hai quan hệ nhân quả có bằng chứng:
 
-1. Drop latest làm các ground-truth DOI biến mất, đồng thời blank summary/duplicate/stale date làm quality và freshness fail → hit rate giảm `1.0 → 0.0`, Token F1 giảm `0.8816 → 0.5537`.
+1. Drop latest làm các ground-truth DOI biến mất, đồng thời blank summary/duplicate/stale date làm quality và freshness fail → hit rate sụp đổ `1.0 → 0.0`, Token F1 giảm `0.8816 → 0.5537`, judge accuracy giảm `0.7 → 0.5`.
 2. Rebuild từ immutable raw records khôi phục 24 clean unique rows và stale ratio `4.17%` → quality/freshness pass và cả bốn metrics trở lại chính xác baseline.
 
 ## 11. Vấn đề tích hợp quan trọng
@@ -221,7 +225,7 @@ Blocker môi trường khi tải model là lỗi SSL certificate trên máy Wind
 | Giới hạn | Ảnh hưởng | Hướng cải thiện có thể kiểm chứng |
 | --- | --- | --- |
 | Test set chỉ có 10 câu và tái dùng một số papers | Metric nhạy với việc drop nhóm records đầu | Sampling phân tầng theo thời gian/category; chạy nhiều seeds và báo mean/std |
-| Judge cuối dùng heuristic mock | Không phản ánh đầy đủ đánh giá ngữ nghĩa của LLM | Chạy lại với provider thật, lưu model/version và so sánh với heuristic |
+| Judge chỉ dùng một model (`gpt-4o-mini`), baseline judge accuracy 0.7 | Judge có thể khắt khe/thiên lệch với câu trả lời trích một phần | Lưu model/version vào metrics JSON, so sánh với judge model thứ hai và với Token F1 |
 | Ragas chưa chạy | Thiếu faithfulness/context metrics | Bật `RUN_RAGAS=1`, lưu artifact và thời gian chạy |
 | Snapshot chưa có ingest timestamp | Khó audit tuổi của chính snapshot | Thêm lineage manifest gồm fetched_at, source mode và record counts |
 | Title corruption chưa có expectation độ dài riêng | Được phản ánh qua retrieval nhưng không có signal GX độc lập | Thêm title-length expectation và test corrupted value `<8` |
